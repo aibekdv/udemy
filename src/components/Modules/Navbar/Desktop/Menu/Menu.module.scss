@@ -1,0 +1,13 @@
+.menuItem{
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: 8px;
+ cursor: pointer;
+ font-size: 14px;
+
+ &:hover{
+  background: rgba(134, 134, 134, 0.1);
+  color: currentColor;
+ }
+}
