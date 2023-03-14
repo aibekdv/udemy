@@ -1,1 +1,1 @@
-export {}
+export { store, useAppDispatch } from "./rootReducer"

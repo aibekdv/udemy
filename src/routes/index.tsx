@@ -1,4 +1,5 @@
 import ResetPassword from "@/components/Auth/Reset";
+import { TeachingInfo } from "@/components/Teacher";
 import { HomePage, LoginPage, RegisterTeacher, RegisterUser } from "@/pages";
 import NotFoundPage from "@/pages/NotFound";
 import { Route, Routes } from "react-router-dom";
@@ -10,19 +11,23 @@ const routes = [
   },
   {
     element: <LoginPage />,
-    path: "/user/login",
+    path: "/login",
   },
   {
     element: <RegisterUser />,
-    path: "/user/register",
+    path: "/register",
   },
   {
     element: <RegisterTeacher />,
-    path: "/mentor/register",
+    path: "/register/mentor",
   },
   {
     element: <ResetPassword />,
-    path: "/user/forgot-possword",
+    path: "/forgot-possword",
+  },
+  {
+    element: <TeachingInfo />,
+    path: "/teaching-info",
   },
   {
     element: <NotFoundPage />,

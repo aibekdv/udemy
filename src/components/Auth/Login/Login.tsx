@@ -1,9 +1,36 @@
 import React from "react";
 import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import googleIcon from "@/assets/google.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/store";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { SignIn } from "@/store/user/slice";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/store/user/selector";
+
+type FormValues = {
+  email: string;
+  password: string;
+};
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { status } = useSelector(selectUser);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    try {
+      dispatch(SignIn(data));
+      status === "success" && navigate("/")
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Box sx={{ display: "flex", justifyContent: "center", mt: 3, px: 2 }}>
       <Box
@@ -37,7 +64,11 @@ const Login: React.FC = () => {
           <Box component="img" src={googleIcon} sx={{ pr: 1 }} />
           Continue with Google
         </Button>
-        <Box component="form" sx={{ display: "flex", flexDirection: "column" }}>
+        <Box
+          component="form"
+          sx={{ display: "flex", flexDirection: "column" }}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TextField
             type="email"
             sx={{
@@ -66,6 +97,7 @@ const Login: React.FC = () => {
             color="secondary"
             label="Email"
             variant="filled"
+            {...register("email", { required: true })}
           />
           <TextField
             type="password"
@@ -95,6 +127,7 @@ const Login: React.FC = () => {
             color="secondary"
             label="Password"
             variant="filled"
+            {...register("password", { required: true })}
           />
           <Button
             variant="contained"
@@ -118,7 +151,7 @@ const Login: React.FC = () => {
           or &nbsp;
           <Typography
             component={Link}
-            to="/user/forgot-possword"
+            to="/forgot-possword"
             variant="subtitle1"
             sx={{
               my: 1,

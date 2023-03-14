@@ -9,8 +9,11 @@ import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import { Menu } from "./Menu";
 import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined";
 import { Search } from "../../Search";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/store/user/selector";
 
 const DesktopHeader: React.FC = () => {
+  const { isAuth } = useSelector(selectUser);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ bgcolor: "white" }}>
@@ -74,43 +77,47 @@ const DesktopHeader: React.FC = () => {
               </Link>
             </IconButton>
             {/* Auth buttons //login and signup */}
-            <Link to="/user/login">
-              <Button
-                variant="outlined"
-                color="inherit"
-                sx={{
-                  color: "black",
-                  borderColor: "black",
-                  borderRadius: 0,
-                  textTransform: "inherit",
-                  fontWeight: 600,
-                }}
-              >
-                Log in
-              </Button>
-            </Link>
-            <Link to="/user/register">
-              <Button
-                variant="contained"
-                color="inherit"
-                sx={{
-                  bgcolor: "black",
-                  boxShadow: "none",
-                  borderRadius: 0,
-                  textTransform: "inherit",
-                  fontWeight: 600,
-                  ml: 1,
-                  opacity: 0.93,
-                  "&:hover": {
-                    boxShadow: "none",
-                    bgcolor: "black",
-                    opacity: 1,
-                  },
-                }}
-              >
-                Sign up
-              </Button>
-            </Link>
+            {!isAuth && (
+              <>
+                <Link to="/login">
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    sx={{
+                      color: "black",
+                      borderColor: "black",
+                      borderRadius: 0,
+                      textTransform: "inherit",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Log in
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                      bgcolor: "black",
+                      boxShadow: "none",
+                      borderRadius: 0,
+                      textTransform: "inherit",
+                      fontWeight: 600,
+                      ml: 1,
+                      opacity: 0.93,
+                      "&:hover": {
+                        boxShadow: "none",
+                        bgcolor: "black",
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    Sign up
+                  </Button>
+                </Link>
+              </>
+            )}
             {/* Choose language */}
             <Button
               variant="outlined"

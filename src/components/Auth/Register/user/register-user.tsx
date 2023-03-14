@@ -1,21 +1,35 @@
 import React from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { $api } from "@/utils/config/base";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useAppDispatch } from "@/store";
+import { SignUp } from "@/store/user/slice";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/store/user/selector";
+
+type FormValues = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  password2: string;
+};
 
 const RegisterUser: React.FC = () => {
-  const fetchLog = async () => {
-    try {
-      const { data } = await $api.get("categories");
-      console.log(data);
-    } catch (e) {
-      console.log(e);
+  const dispatch = useAppDispatch();
+  const { successMessage, errorMessage, status } = useSelector(selectUser);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    if (data.password == data.password2) {
+      dispatch(SignUp(data));
+      reset(data);
     }
   };
-
-  React.useEffect(() => {
-    // fetchLog();
-  }, []);
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", mt: 3, px: 2 }}>
@@ -27,6 +41,7 @@ const RegisterUser: React.FC = () => {
           width: "100%",
         }}
         component="form"
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
           Sign up and start learning
@@ -58,8 +73,20 @@ const RegisterUser: React.FC = () => {
           }}
           color="secondary"
           label="First name"
-          required
           variant="filled"
+          error={errors.first_name ? true : false}
+          helperText={errors.first_name?.message}
+          {...register("first_name", {
+            required: true,
+            minLength: {
+              value: 3,
+              message: "First name must have at least 3 characters",
+            },
+            pattern: {
+              value: /^[a-zA-Zа-яА-я]+$/,
+              message: "Sorry this Udemy can only handle names with characters",
+            },
+          })}
         />
         <TextField
           type="text"
@@ -88,8 +115,20 @@ const RegisterUser: React.FC = () => {
           }}
           color="secondary"
           label="Last name"
-          required
           variant="filled"
+          helperText={errors.last_name?.message}
+          error={errors.last_name ? true : false}
+          {...register("last_name", {
+            required: true,
+            minLength: {
+              value: 3,
+              message: "Last name must have at least 3 characters",
+            },
+            pattern: {
+              value: /^[a-zA-Zа-яА-я]+$/,
+              message: "Sorry this Udemy can only handle names with characters",
+            },
+          })}
         />
         <TextField
           type="email"
@@ -118,8 +157,16 @@ const RegisterUser: React.FC = () => {
           }}
           color="secondary"
           label="Email"
-          required
           variant="filled"
+          helperText={errors.email?.message}
+          error={errors.email ? true : false}
+          {...register("email", {
+            required: true,
+            minLength: {
+              value: 8,
+              message: "Email must have",
+            },
+          })}
         />
         <TextField
           type="password"
@@ -148,8 +195,22 @@ const RegisterUser: React.FC = () => {
           }}
           color="secondary"
           label="Password"
-          required
           variant="filled"
+          helperText={errors.password?.message}
+          error={errors.password ? true : false}
+          {...register("password", {
+            required: "You must specify a password",
+            minLength: {
+              value: 8,
+              message:
+                "The password must consist of 8 or more characters of the Latin alphabet, contain upper and lower case letters, numbers.",
+            },
+            pattern: {
+              value: /^(?=.*\d).+$/,
+              message:
+                "The password must consist of 8 or more characters of the Latin alphabet, contain upper and lower case letters, numbers.",
+            },
+          })}
         />
         <TextField
           type="password"
@@ -179,8 +240,33 @@ const RegisterUser: React.FC = () => {
           color="secondary"
           label="Password confirm"
           variant="filled"
-          required
+          error={errors.password2 ? true : false}
+          helperText={errors.password2?.message}
+          {...register("password2", {
+            required: "You must specify a password",
+            minLength: {
+              value: 8,
+              message:
+                "The password must consist of 8 or more characters of the Latin alphabet, contain upper and lower case letters, numbers.",
+            },
+            pattern: {
+              value: /^(?=.*\d).+$/,
+              message:
+                "The password must consist of 8 or more characters of the Latin alphabet, contain upper and lower case letters, numbers.",
+            },
+            validate: (value, formValue) => value === formValue.password,
+          })}
         />
+        {successMessage && (
+          <Typography variant="subtitle1" color="success.main">
+            {successMessage}
+          </Typography>
+        )}
+        {errorMessage && (
+          <Typography variant="subtitle1" color="error.main">
+            {errorMessage}
+          </Typography>
+        )}
         <Button
           variant="contained"
           type="submit"
@@ -194,6 +280,7 @@ const RegisterUser: React.FC = () => {
             py: 1.2,
             borderRadius: 0,
           }}
+          disabled={status === "loading"}
         >
           Sign up
         </Button>
@@ -202,7 +289,7 @@ const RegisterUser: React.FC = () => {
           Already have an account? &nbsp;
           <Typography
             component={Link}
-            to="/user/login"
+            to="/login"
             variant="subtitle1"
             sx={{
               my: 1,
